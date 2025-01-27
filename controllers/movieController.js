@@ -19,7 +19,11 @@ function index(req, res) {
 
 function show(req, res) {
   const id = parseInt(req.params.id);
-  const sql = "SELECT * FROM `movies` WHERE `id` = ?";
+  // const sql = "SELECT * FROM `movies` WHERE `id` = ?";
+  const sql = `SELECT movies.*, AVG(reviews.vote) AS vote_average FROM movies
+  JOIN reviews ON reviews.movie_id = movies.id
+  WHERE movies.id = ?
+  GROUP BY reviews.movie_id`;
   connection.query(sql, [id], (err, results) => {
     if (err) return res.status(500).json({ error: "Database query failed" });
     const item = results[0];
@@ -31,11 +35,12 @@ function show(req, res) {
     connection.query(sqlReviews, [id], (err, reviews) => {
       if (err) return res.status(500).json({ error: "Database query failed" });
       item.reviews = reviews;
-      const response = {
-        Count: reviews.length,
-        film: results,
-      };
-      res.json(response);
+      // let film = results;
+      // const response = {
+      //   Count: reviews.length,
+      //   film,
+      // };
+      res.json(item);
     })
   });
 }
