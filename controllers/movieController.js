@@ -68,6 +68,36 @@ function store(req, res) {
   res.status(201).json(newPost);
 }
 
+function storeReviews(req, res) {
+  const { id } = req.params;
+  //! Verificare che l'id sia valido
+  if (!id || isNaN(parseInt(id))) {
+    return res.status(400).json({
+      error: "errore id"
+    })
+  }
+  const { text, name, vote } = req.body
+  //! Validazione del body
+  if (!text || !name || vote === undefined || isNaN(parseFloat(vote))) {
+    return res.status(400).json({
+      error: "Richiesta non valida"
+    })
+  }
+  //?query
+  const sql = "INSERT INTO reviews (text, name, vote, movie_id) VALUES (?, ?, ?, ?)";
+
+  connection.query(sql, [text, name, vote, id], (err, results) => {
+    if (err) {
+      console.error("Database error:", err);
+      return res.status(500).json({ error: "Database query failed" });
+    }
+    res.status(201).json({
+      message: "review added",
+      id: results.insertId,
+    });
+  });
+}
+
 function update(req, res) {
   const id = parseInt(req.params.id);
   const item = posts.find((item) => item.id === id);
@@ -111,4 +141,4 @@ function destroy(req, res) {
   });
 }
 
-export { index, show, store, update, modify, destroy };
+export { index, show, store, storeReviews, update, modify, destroy };

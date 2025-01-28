@@ -5,6 +5,7 @@ import {
     index,
     show,
     store,
+    storeReviews,
     update,
     modify,
     destroy,
@@ -18,6 +19,9 @@ router.get("/:id", show);
 
 //Create - Store
 router.post("/", store);
+
+//Create - StoreReview
+router.post("/:id/reviews", storeReviews);
 
 //Update totale - Update
 router.put("/:id", update);
